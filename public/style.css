@@ -1,0 +1,36 @@
+table{
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 5px;
+}
+table, th, td{
+    border: 1px solid black;
+}
+.left-aligned-cell{
+    text-align: left;
+}
+
+.footer{
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+.second{
+    justify-content: flex-start;
+    margin-left: auto;
+}
+
+.download{
+    margin: 0 auto;
+}
+
+
+.fooooorm{
+    margin: 0 auto;
+    font-size: 1.2rem;
+}
+
+.asdfasdfasdf{
+    width: 100%;
+    border: 5px solid black;
+}

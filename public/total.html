@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>벌금 게시판</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+  <style type="text/css">
+    a:link { color: red; text-decoration: none;}
+    a:visited { color: black; text-decoration: none;}
+    a:hover { color: blue; text-decoration: underline;}
+   </style>
+</head>
+<body style='font-family: "Do Hyeon", sans-serif;'>
+  <script src="main.js" ></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> 
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+  
+  <div class="container mt-5 mb-3">
+    <div class="footer">
+      <a href="index.html"><h4 class="first">벌금 게시판</h4></a>      <button  type="button" class=" btn btn-dark download" id="downlaod">다운로드</button>
+
+      <button onclick='location.href="upload.html"' type="button" class=" btn btn-dark second">업로드</button>
+    </div>
+
+  </div>
+
+    <div class="container mt-3">
+      <form>
+        <select id="name" name="name" class="form-control mt-2 foooorm custom-select form-control custom-select fooooorm selecteed">
+          <option selected>이름</option>
+          <option value="고윤성">고윤성</option>
+          <option value="공동현">공동현</option>
+          <option value="구윤">구윤</option>
+          <option value="구홍모">구홍모</option>
+          <option value="김규린">김규린</option>
+          <option value="김석연">김석연</option>
+          <option value="김성현">김성현</option>
+          <option value="김수은">김수은</option>
+          <option value="김지훈">김지훈</option>
+          <option value="노은호">노은호</option>
+          <option value="박재효">박재효</option>
+          <option value="박지우">박지우</option>
+          <option value="방민재">방민재</option>
+          <option value="백현빈">백현빈</option>
+          <option value="성하윤">성하윤</option>
+          <option value="송찬">송찬</option>
+          <option value="양동현">양동현</option>
+          <option value="오주혁">오주혁</option>
+          <option value="육정윤">육정윤</option>
+        <option value="윤승리">윤승리</option>
+        <option value="윤재훈">윤재훈</option>
+        <option value="윤재성">윤재성</option>
+        <option value="윤준영">윤준영</option>
+        <option value="이동엽">이동엽</option>
+        <option value="이동원">이동원</option>
+        <option value="이운호">이운호</option>
+        <option value="이종민">이종민</option>
+        <option value="이준서">이준서</option>
+        <option value="이현성">이현성</option>
+        <option value="장성재">장성재</option>
+        <option value="전예준">전예준</option>
+        <option value="정민준">정민준</option>
+        <option value="하헌성">하헌성</option>
+        <option value="한준희">한준희</option>
+        <option value="황현승">황현승</option>
+      </select>
+      </form>
+      <button type="button" class=" btn btn-dark download mt-3" id="checky">확인하기</button>
+
+    </div>
+    <div class="container mt-5 mb-3">
+      <table class="halo" id="posts" style="text-align: center; border: 2px solid #000;">
+        <tr style="font-size: 1.2rem;">
+          <th style="font-weight: bold; width: 200px;">이름 </th>
+          <th style="font-weight: bold; width: 300px;">날짜 </th>
+          <th style="font-weight: bold; width: 150px;">시간 </th>
+          <th style="font-weight: bold; width: 800px;">사유 </th>
+          <th style="font-weight: bold; width: 150px;">금액 </th>
+        
+        
+      </table>
+    </div>
+
+    </div>
+
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyAPuLYEvXybAM2Nkj8s7AN60Hcg6dSvaxI",
+      authDomain: "dshsfine.firebaseapp.com",
+      projectId: "dshsfine",
+      storageBucket: "dshsfine.appspot.com",
+      messagingSenderId: "932376056646",
+      appId: "1:932376056646:web:3d47f1dd8fcd14ded88b47",
+      measurementId: "G-G3GH2MWHBG"
+    };
+
+
+    firebase.initializeApp(firebaseConfig);
+
+    const excelDownload = document.querySelector('#downlaod');
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    excelDownload.addEventListener('click', exportExcel);
+});
+
+function exportExcel(){ 
+//엑셀 시트 생성
+  var wb = XLSX.utils.book_new();
+  var newSh = excelHandler.getWorksheet();
+  XLSX.utils.book_append_sheet(wb, newSh, excelHandler.getSheetName());
+  var wb = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
+
+  saveAs(new Blob([stab(wb)],{type:"application/octet-stream"}), excelHandler.getExcelFileName());
+}
+
+var excelHandler = {
+    getExcelFileName : function(){
+        return '개인(이름 변경).xlsx';	//파일 이름
+    },
+    getSheetName : function(){
+        return '시트 이름';	//시트 이름
+    },
+    getExcelData : function(){
+        return document.getElementById('posts'); 	//TABLE id
+    },
+    getWorksheet : function(){
+        return XLSX.utils.table_to_sheet(this.getExcelData());
+    }
+}
+
+function stab(s) { 
+  var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+  var view = new Uint8Array(buf);  //create uint8array as viewer
+  for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+  return buf;    
+}
+
+
+    const db = firebase.firestore();
+    db.collection('fine').orderBy('timestamp', 'asc').get().then((결과)=>{
+      결과.forEach((doc)=>{
+        var templates = `<tr class="content" style="height: 35px; font-size: 1.1rem;">
+            <td>${doc.data().이름}</td>
+            <td>${doc.data().날짜}</td>
+            <td>${doc.data().총시간}분</td>
+            <td>${doc.data().지각사유}</td>
+            <td>${doc.data().총시간 * 1000}원</td>
+            </tr>`;
+        $('#checky').click(function(){
+          if(doc.data().이름 == "고윤성" && $('#name').val() == "고윤성"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "공동현" && $('#name').val() == "공동현"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "구윤" && $('#name').val() == "구윤"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "구홍모" && $('#name').val() == "구홍모"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "김규린" && $('#name').val() == "김규린"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "김석연" && $('#name').val() == "김석연"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "김성현" && $('#name').val() == "김성현"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "김수은" && $('#name').val() == "김수은"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "김지훈" && $('#name').val() == "김지훈"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "노은호" && $('#name').val() == "노은호"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "박재효" && $('#name').val() == "박재효"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "박지우" && $('#name').val() == "박지우"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "방민재" && $('#name').val() == "방민재"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "백현빈" && $('#name').val() == "백현빈"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "성하윤" && $('#name').val() == "성하윤"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "송찬" && $('#name').val() == "송찬"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "양동현" && $('#name').val() == "양동현"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "오주혁" && $('#name').val() == "오주혁"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "육정윤" && $('#name').val() == "육정윤"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "윤승리" && $('#name').val() == "윤승리"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "윤재훈" && $('#name').val() == "윤재훈"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "윤재성" && $('#name').val() == "윤재성"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "윤재성" && $('#name').val() == "윤재성"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "윤준영" && $('#name').val() == "윤준영"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "이동엽" && $('#name').val() == "이동엽"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "이동원" && $('#name').val() == "이동원"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "이운호" && $('#name').val() == "이운호"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "이종민" && $('#name').val() == "이종민"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "이준서" && $('#name').val() == "이준서"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "이현성" && $('#name').val() == "이현성"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "장성재" && $('#name').val() == "장성재"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "전예준" && $('#name').val() == "전예준"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "정민준" && $('#name').val() == "정민준"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "하헌성" && $('#name').val() == "하헌성"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "한준희" && $('#name').val() == "한준희"){
+            $('.halo').append(templates)
+          }
+          if(doc.data().이름 == "황현승" && $('#name').val() == "황현승"){
+            $('.halo').append(templates)
+          }
+
+
+        })
+
+
+        
+      })
+    })
+
+</script>
+</body>
+</html>

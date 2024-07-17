@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>벌금 게시판</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+  <style type="text/css">
+    a:link { color: red; text-decoration: none;}
+    a:visited { color: black; text-decoration: none;}
+    a:hover { color: blue; text-decoration: underline;}
+   </style>
+</head>
+<body style='font-family: "Do Hyeon", sans-serif;'>
+  <script src="main.js" ></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> 
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+  <div class="container mt-5 mb-3">
+    <div class="footer">
+      <a href="index.html"><h4 class="first">벌금 게시판</h4></a>
+      <button onclick='location.href="upload.html"' type="button" class=" btn btn-dark second">업로드</button>
+    </div>
+  </div>
+  <div class="input-group mb-3">
+      
+    
+    <div class="container mt-3">
+      <form>
+        <select id="name" name="name" class="form-control mt-2 foooorm custom-select form-control custom-select fooooorm selecteed">
+          <option selected>이름</option>
+          <option value="고윤성">고윤성</option>
+          <option value="공동현">공동현</option>
+          <option value="구윤">구윤</option>
+          <option value="구홍모">구홍모</option>
+          <option value="김규린">김규린</option>
+          <option value="김석연">김석연</option>
+          <option value="김성현">김성현</option>
+          <option value="김수은">김수은</option>
+          <option value="김지훈">김지훈</option>
+          <option value="노은호">노은호</option>
+          <option value="박재효">박재효</option>
+          <option value="박지우">박지우</option>
+          <option value="방민재">방민재</option>
+          <option value="백현빈">백현빈</option>
+          <option value="성하윤">성하윤</option>
+          <option value="송찬">송찬</option>
+          <option value="양동현">양동현</option>
+          <option value="오주혁">오주혁</option>
+          <option value="육정윤">육정윤</option>
+        <option value="윤승리">윤승리</option>
+        <option value="윤재훈">윤재훈</option>
+        <option value="윤재성">윤재성</option>
+        <option value="윤준영">윤준영</option>
+        <option value="이동엽">이동엽</option>
+        <option value="이동원">이동원</option>
+        <option value="이운호">이운호</option>
+        <option value="이종민">이종민</option>
+        <option value="이준서">이준서</option>
+        <option value="이현성">이현성</option>
+        <option value="장성재">장성재</option>
+        <option value="전예준">전예준</option>
+        <option value="정민준">정민준</option>
+        <option value="하헌성">하헌성</option>
+        <option value="한준희">한준희</option>
+        <option value="황현승">황현승</option>
+      </select>
+      </form>
+      <input type="date" class="form-control mt-2 fooooorm" id="date" placeholder="날짜">
+      <input type="text" class="form-control mt-2 fooooorm" id="totaltime" placeholder="총 늦은 시간(분)">
+      <textarea class="form-control mt-2 fooooorm"  id="reason">지각 사유</textarea>
+      <div style="width: 100%; margin-top: 0.7rem; border: 1px solid #dbdee2; border-radius: 5px; padding: 1rem;">
+        <h5>본인확인</h5>
+        <input class="form-check-input p-3" type="checkbox" id="checkcheck" aria-label="Checkbox for following text input">
+      </div>
+      <button class="btn btn-dark mt-3 fooooorm" id="send">올리기</button>
+    </div>
+  </div>
+  
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyAPuLYEvXybAM2Nkj8s7AN60Hcg6dSvaxI",
+      authDomain: "dshsfine.firebaseapp.com",
+      projectId: "dshsfine",
+      storageBucket: "dshsfine.appspot.com",
+      messagingSenderId: "932376056646",
+      appId: "1:932376056646:web:3d47f1dd8fcd14ded88b47",
+      measurementId: "G-G3GH2MWHBG"
+    };
+
+
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.firestore();
+    $('#send').click(function(){
+    var save = { 
+      이름 : $('#name').val(),
+      날짜 : $('#date').val(),
+      총시간 : $('#totaltime').val(),
+      지각사유: $("#reason").val(),
+      본인확인: $("#checkcheck").val(),
+      timestamp: new Date()
+    }
+    db.collection('fine').add(save).then((result)=>{
+    window.location.href = '/index.html'
+  }).catch((error)=>{
+    print(error)
+    alert("실패!")
+  })
+});
+
+</script>
+</body>
+</html>
