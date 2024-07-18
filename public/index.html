@@ -65,13 +65,19 @@
     <h1 class="username">로그인 안됨</h1>
   </div>
 
-  <div class="container mt-5 mb-3">
+  <div class="container mt-5 mb-2">
     <div class="footer">
       <a href="index.html"><h4 class="first">벌금 게시판</h4></a>
       <button  type="button" class=" btn btn-dark download" id="downlaod">다운로드</button>
       
       <button id="upload" type="button" class=" btn btn-dark second">업로드</button>
       
+    </div>
+
+    <div class="mt-1 mb-1" style="display: flex;">
+      <h2>총금액:&nbsp;</h2>
+      <h2 style="color: red;" class="totalprice"></h1>
+      <h2>원</h2>
     </div>
 
     <table class="halo" id="posts" style="text-align: center; border: 2px solid #000;">
@@ -152,6 +158,8 @@ if(error){
 });
 });
 
+
+
     const excelDownload = document.querySelector('#downlaod');
 
 document.addEventListener('DOMContentLoaded', ()=>{
@@ -189,13 +197,14 @@ function stab(s) {
   for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
   return buf;    
 }
-
-    
+  
+    let totalprice = 0
     const db = firebase.firestore();
     db.collection('fine').orderBy('timestamp', 'asc').get().then((결과)=>{
       결과.forEach((doc)=>{
         const data = doc.data();
-    
+        totalprice = totalprice+ parseInt(doc.data().총시간)
+        $('.totalprice').html(totalprice*1000)
     // 날짜 필드를 Firebase Timestamp 객체로 변환 (필요 시)
     const timestamp = data.timestamp;
     let formattedDate = '';
