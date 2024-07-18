@@ -25,6 +25,28 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-firestore.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+  
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">벌금 게시판</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list hamburgar" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+        </svg>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="login1.html">로그인</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="login.html">회원가입</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
   <div class="container mt-5 mb-3">
     <div class="footer">
       <a href="index.html"><h4 class="first">벌금 게시판</h4></a>
@@ -97,8 +119,20 @@
       measurementId: "G-G3GH2MWHBG"
     };
 
+    
+
 
     firebase.initializeApp(firebaseConfig);
+
+    username = ""
+    firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    username = user.email.substring(0,3)
+  } else {
+    // 로그인된 사용자가 없는 경우
+    console.log("No user is logged in.");
+  }
+});
 
     const db = firebase.firestore();
     $('#send').click(function(){
@@ -108,12 +142,12 @@
       총시간 : $('#totaltime').val(),
       지각사유: $("#reason").val(),
       본인확인: $("#checkcheck").val(),
-      timestamp: new Date()
+      timestamp: new Date(),
+      쓴사람이름: username
     }
     db.collection('fine').add(save).then((result)=>{
     window.location.href = '/index.html'
   }).catch((error)=>{
-    print(error)
     alert("실패!")
   })
 });

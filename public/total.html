@@ -28,11 +28,39 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
   
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">벌금 게시판</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list hamburgar" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+        </svg>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="login1.html">로그인</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="login.html">회원가입</a>
+          </li>
+          <li>
+            <a class="nav-link" id="logout">로그아웃</a>
+
+            <!-- <button id="logout" type="button" class=" btn btn-dark second">로그아웃</button> -->
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <div class="container mt-5 mb-3">
     <div class="footer">
-      <a href="index.html"><h4 class="first">벌금 게시판</h4></a>      <button  type="button" class=" btn btn-dark download" id="downlaod">다운로드</button>
+      <a href="index.html"><h4 class="first">벌금 게시판</h4></a>      
+      <button  type="button" class=" btn btn-dark download" id="downlaod">다운로드</button>
 
       <button onclick='location.href="upload.html"' type="button" class=" btn btn-dark second">업로드</button>
+
     </div>
 
   </div>
@@ -79,9 +107,16 @@
       </select>
       </form>
       <button type="button" class=" btn btn-dark download mt-3" id="checky">확인하기</button>
+      <button type="button" class=" btn btn-dark download mt-3" id="delete">삭제하기</button>
+      <h5 class="mt-2">*다른 분의 벌금을 확인하시려면 반드시 삭제버튼을 눌러주셔야됩니다!</h5>
 
+      <div class="mt-2" style="display: flex;">
+        <h1>총가격:&nbsp;</h1>
+        <h1 style="color: red;" class="totalprice"></h1>
+        <h1>원</h1>
+      </div>
     </div>
-    <div class="container mt-5 mb-3">
+    <div class="container mt-2 mb-3">
       <table class="halo" id="posts" style="text-align: center; border: 2px solid #000;">
         <tr style="font-size: 1.2rem;">
           <th style="font-weight: bold; width: 200px;">이름 </th>
@@ -89,6 +124,8 @@
           <th style="font-weight: bold; width: 150px;">시간 </th>
           <th style="font-weight: bold; width: 800px;">사유 </th>
           <th style="font-weight: bold; width: 150px;">금액 </th>
+          <th style="font-weight: bold; width: 150px;">작성자 </th>
+        </tr>
         
         
       </table>
@@ -109,6 +146,20 @@
 
 
     firebase.initializeApp(firebaseConfig);
+
+    $("#logout").click(function(){
+
+firebase.auth().signOut().then(function() {
+        //alert("로그아웃 되었습니다")
+        //메인 페이지로 이동시키고 세션 저장시키기
+        window.location.href = "/index.html"
+        
+}).catch(function(error) {
+if(error){
+        alert("로그인 실패");
+}
+});
+});
 
     const excelDownload = document.querySelector('#downlaod');
 
@@ -147,135 +198,219 @@ function stab(s) {
   for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
   return buf;    
 }
-
-
-    const db = firebase.firestore();
+      let totalprice = 0
+      const db = firebase.firestore();
+      
     db.collection('fine').orderBy('timestamp', 'asc').get().then((결과)=>{
       결과.forEach((doc)=>{
+        totalprice=0
         var templates = `<tr class="content" style="height: 35px; font-size: 1.1rem;">
             <td>${doc.data().이름}</td>
             <td>${doc.data().날짜}</td>
             <td>${doc.data().총시간}분</td>
             <td>${doc.data().지각사유}</td>
             <td>${doc.data().총시간 * 1000}원</td>
+            <td>${doc.data().쓴사람이름}</td>
             </tr>`;
         $('#checky').click(function(){
+          
           if(doc.data().이름 == "고윤성" && $('#name').val() == "고윤성"){
             $('.halo').append(templates)
+            
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "공동현" && $('#name').val() == "공동현"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "구윤" && $('#name').val() == "구윤"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "구홍모" && $('#name').val() == "구홍모"){
-            $('.halo').append(templates)
+            $('.halo').html(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "김규린" && $('#name').val() == "김규린"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "김석연" && $('#name').val() == "김석연"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "김성현" && $('#name').val() == "김성현"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "김수은" && $('#name').val() == "김수은"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "김지훈" && $('#name').val() == "김지훈"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "노은호" && $('#name').val() == "노은호"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "박재효" && $('#name').val() == "박재효"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "박지우" && $('#name').val() == "박지우"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "방민재" && $('#name').val() == "방민재"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "백현빈" && $('#name').val() == "백현빈"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "성하윤" && $('#name').val() == "성하윤"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "송찬" && $('#name').val() == "송찬"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "양동현" && $('#name').val() == "양동현"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "오주혁" && $('#name').val() == "오주혁"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "육정윤" && $('#name').val() == "육정윤"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "윤승리" && $('#name').val() == "윤승리"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "윤재훈" && $('#name').val() == "윤재훈"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "윤재성" && $('#name').val() == "윤재성"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "윤재성" && $('#name').val() == "윤재성"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "윤준영" && $('#name').val() == "윤준영"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "이동엽" && $('#name').val() == "이동엽"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "이동원" && $('#name').val() == "이동원"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "이운호" && $('#name').val() == "이운호"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "이종민" && $('#name').val() == "이종민"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "이준서" && $('#name').val() == "이준서"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "이현성" && $('#name').val() == "이현성"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "장성재" && $('#name').val() == "장성재"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "전예준" && $('#name').val() == "전예준"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "정민준" && $('#name').val() == "정민준"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "하헌성" && $('#name').val() == "하헌성"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "한준희" && $('#name').val() == "한준희"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
           if(doc.data().이름 == "황현승" && $('#name').val() == "황현승"){
             $('.halo').append(templates)
+            totalprice = totalprice+ parseInt(doc.data().총시간)
+            $('.totalprice').html(totalprice*1000)
           }
-
+          
 
         })
-
+        
 
         
       })
+      
+      
     })
+    $('#delete').click(function(){
+        $('.content').remove()
+        totalprice = 0
+        $('.totalprice').html(totalprice*1000)
+      })
+    
 
 </script>
 </body>
