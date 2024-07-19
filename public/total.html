@@ -42,9 +42,6 @@
           <li class="nav-item">
             <a class="nav-link" href="login1.html">로그인</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="login.html">회원가입</a>
-          </li>
           <li>
             <a class="nav-link" id="logout">로그아웃</a>
 
@@ -60,7 +57,7 @@
       <a href="index.html"><h4 class="first">벌금 게시판</h4></a>      
       <button  type="button" class=" btn btn-dark download" id="downlaod">다운로드</button>
 
-      <button onclick='location.href="upload.html"' type="button" class=" btn btn-dark second">업로드</button>
+      <button id="upload" type="button" class=" btn btn-dark second">업로드</button>
 
     </div>
 
@@ -161,6 +158,26 @@ if(error){
 }
 });
 });
+
+firebase.auth().onAuthStateChanged((user)=>{
+          if(user){
+            console.log(user.uid)
+            console.log(user.displayName)
+            $('#userName').html(user.displayName)
+            a = "yes"
+          }else{
+            a = 'no';
+            console.log(a)
+          }
+      })
+
+document.getElementById('upload').addEventListener('click', function() {
+        if (a === "no") {
+          alert("로그인되지 않았습니다.");
+        }else{
+          location.href ='upload.html'
+        }
+      });
 
     const excelDownload = document.querySelector('#downlaod');
 
